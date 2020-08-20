@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.814north.devops.dvs</groupId>
+		<artifactId>814NorthDockerVersionService</artifactId>
+		<version>1.0</version>
+	</parent>
+
+	<artifactId>dvswrite</artifactId>
+	<version>2.1</version>
+	<packaging>war</packaging>
+	
+	<name>814NorthDockerVersionService Write</name>
+
+	<build>
+		<finalName>dvswrite</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<fork>true</fork>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.2.1</version>
+				<configuration>
+					<outputDirectory>${basedir}/docker</outputDirectory>
+				</configuration>
+			</plugin>
+			<!-- see this page for all the options: https://dzone.com/articles/build-docker-image-from-maven -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>docker-build</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>docker</executable>
+							<workingDirectory>${basedir}/docker</workingDirectory>
+							<arguments>
+								<argument>build</argument>
+								<argument>--label</argument>
+								<argument>build_version=${project.version}</argument>
+								<argument>-t</argument>
+								<argument>${project.build.finalName}</argument>
+								<argument>.</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
